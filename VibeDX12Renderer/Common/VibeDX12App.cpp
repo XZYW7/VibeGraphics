@@ -47,10 +47,12 @@ namespace Vibe {
 
         ThrowIfFailed(m_d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
         m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        m_dsvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
         InitCommandObjects();
         InitSwapChain();
         InitRtvHeap();
+        InitDepthStencilBuffer();
     }
 
     void VibeDX12App::InitCommandObjects() {
@@ -99,6 +101,62 @@ namespace Vibe {
             m_d3dDevice->CreateRenderTargetView(m_swapChainBuffers[i].Get(), nullptr, rtvHeapHandle);
             rtvHeapHandle.Offset(1, m_rtvDescriptorSize);
         }
+
+        // 创建 DSV Heap
+        D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+        dsvHeapDesc.NumDescriptors = 1;
+        dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+        dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        dsvHeapDesc.NodeMask = 0;
+        ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
+    }
+
+    void VibeDX12App::InitDepthStencilBuffer() {
+        D3D12_RESOURCE_DESC depthStencilDesc = {};
+        depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+        depthStencilDesc.Alignment = 0;
+        depthStencilDesc.Width = m_ClientWidth;
+        depthStencilDesc.Height = m_ClientHeight;
+        depthStencilDesc.DepthOrArraySize = 1;
+        depthStencilDesc.MipLevels = 1;
+        depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // 24位深度，8位模板
+        depthStencilDesc.SampleDesc.Count = 1;
+        depthStencilDesc.SampleDesc.Quality = 0;
+        depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+        depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+        D3D12_CLEAR_VALUE optClear;
+        optClear.Format = m_depthStencilFormat;
+        optClear.DepthStencil.Depth = 1.0f;
+        optClear.DepthStencil.Stencil = 0;
+        
+        auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+        ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
+            &heapProps,
+            D3D12_HEAP_FLAG_NONE,
+            &depthStencilDesc,
+            D3D12_RESOURCE_STATE_COMMON,
+            &optClear,
+            IID_PPV_ARGS(&m_depthStencilBuffer)));
+
+        // 创建 DSV
+        m_d3dDevice->CreateDepthStencilView(m_depthStencilBuffer.Get(), nullptr, DepthStencilView());
+
+        // 使用 CommandList 将其 transition 到 DepthWrite 状态
+        ThrowIfFailed(m_commandAllocator->Reset()); // 需要确保此时 GPU 没有在使用 allocator
+        ThrowIfFailed(m_commandList->Reset(m_commandAllocator.Get(), nullptr));
+
+        auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+            m_depthStencilBuffer.Get(),
+            D3D12_RESOURCE_STATE_COMMON,
+            D3D12_RESOURCE_STATE_DEPTH_WRITE);
+        m_commandList->ResourceBarrier(1, &barrier);
+
+        ThrowIfFailed(m_commandList->Close());
+        ID3D12CommandList* cmdsLists[] = { m_commandList.Get() };
+        m_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+        
+        FlushCommandQueue();
     }
 
     void VibeDX12App::FlushCommandQueue() {
@@ -122,5 +180,9 @@ namespace Vibe {
 
     ID3D12Resource* VibeDX12App::CurrentBackBuffer() const {
         return m_swapChainBuffers[m_currBackBuffer].Get();
+    }
+
+    D3D12_CPU_DESCRIPTOR_HANDLE VibeDX12App::DepthStencilView() const {
+        return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
     }
 }

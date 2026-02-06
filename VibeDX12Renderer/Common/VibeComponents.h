@@ -98,10 +98,74 @@ struct CD3DX12_RESOURCE_BARRIER : public D3D12_RESOURCE_BARRIER
 struct CD3DX12_DEFAULT {};
 extern const DECLSPEC_SELECTANY CD3DX12_DEFAULT D3D12_DEFAULT;
 
+struct CD3DX12_ROOT_PARAMETER : public D3D12_ROOT_PARAMETER
+{
+    CD3DX12_ROOT_PARAMETER() = default;
+    static inline void InitAsDescriptorTable(_Out_ D3D12_ROOT_PARAMETER& rootParam, UINT numDescriptorRanges, _In_reads_(numDescriptorRanges) const D3D12_DESCRIPTOR_RANGE* pDescriptorRanges, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+        rootParam.ShaderVisibility = visibility;
+        rootParam.DescriptorTable.NumDescriptorRanges = numDescriptorRanges;
+        rootParam.DescriptorTable.pDescriptorRanges = pDescriptorRanges;
+    }
+    static inline void InitAsConstants(_Out_ D3D12_ROOT_PARAMETER& rootParam, UINT num32BitValues, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+        rootParam.ShaderVisibility = visibility;
+        rootParam.Constants.Num32BitValues = num32BitValues;
+        rootParam.Constants.ShaderRegister = shaderRegister;
+        rootParam.Constants.RegisterSpace = registerSpace;
+    }
+    static inline void InitAsConstantBufferView(_Out_ D3D12_ROOT_PARAMETER& rootParam, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+        rootParam.ShaderVisibility = visibility;
+        rootParam.Descriptor.ShaderRegister = shaderRegister;
+        rootParam.Descriptor.RegisterSpace = registerSpace;
+    }
+    static inline void InitAsShaderResourceView(_Out_ D3D12_ROOT_PARAMETER& rootParam, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
+        rootParam.ShaderVisibility = visibility;
+        rootParam.Descriptor.ShaderRegister = shaderRegister;
+        rootParam.Descriptor.RegisterSpace = registerSpace;
+    }
+    static inline void InitAsUnorderedAccessView(_Out_ D3D12_ROOT_PARAMETER& rootParam, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_UAV;
+        rootParam.ShaderVisibility = visibility;
+        rootParam.Descriptor.ShaderRegister = shaderRegister;
+        rootParam.Descriptor.RegisterSpace = registerSpace;
+    }
+    inline void InitAsDescriptorTable(UINT numDescriptorRanges, _In_reads_(numDescriptorRanges) const D3D12_DESCRIPTOR_RANGE* pDescriptorRanges, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        InitAsDescriptorTable(*this, numDescriptorRanges, pDescriptorRanges, visibility);
+    }
+    inline void InitAsConstants(UINT num32BitValues, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        InitAsConstants(*this, num32BitValues, shaderRegister, registerSpace, visibility);
+    }
+    inline void InitAsConstantBufferView(UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        InitAsConstantBufferView(*this, shaderRegister, registerSpace, visibility);
+    }
+    inline void InitAsShaderResourceView(UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        InitAsShaderResourceView(*this, shaderRegister, registerSpace, visibility);
+    }
+    inline void InitAsUnorderedAccessView(UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL) noexcept
+    {
+        InitAsUnorderedAccessView(*this, shaderRegister, registerSpace, visibility);
+    }
+};
+
 struct CD3DX12_ROOT_SIGNATURE_DESC : public D3D12_ROOT_SIGNATURE_DESC {
     CD3DX12_ROOT_SIGNATURE_DESC() = default;
     inline void Init(UINT numParameters, const D3D12_ROOT_PARAMETER* _pParameters, UINT numStaticSamplers = 0, const D3D12_STATIC_SAMPLER_DESC* _pStaticSamplers = nullptr, D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE) {
         Init(*this, numParameters, _pParameters, numStaticSamplers, _pStaticSamplers, flags);
+    }
+    inline CD3DX12_ROOT_SIGNATURE_DESC(UINT numParameters, const D3D12_ROOT_PARAMETER* _pParameters, UINT numStaticSamplers = 0, const D3D12_STATIC_SAMPLER_DESC* _pStaticSamplers = nullptr, D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE) {
+        Init(numParameters, _pParameters, numStaticSamplers, _pStaticSamplers, flags);
     }
     static inline void Init(D3D12_ROOT_SIGNATURE_DESC &desc, UINT numParameters, const D3D12_ROOT_PARAMETER* _pParameters, UINT numStaticSamplers = 0, const D3D12_STATIC_SAMPLER_DESC* _pStaticSamplers = nullptr, D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE) {
         desc.NumParameters = numParameters;

@@ -25,7 +25,14 @@ namespace Vibe {
         int m_currBackBuffer = 0;
         ComPtr<ID3D12Resource> m_swapChainBuffers[SwapChainBufferCount];
         ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
+        ComPtr<ID3D12DescriptorHeap> m_dsvHeap; // 深度缓冲区堆
+        
         UINT m_rtvDescriptorSize = 0;
+        UINT m_dsvDescriptorSize = 0;
+
+        // 深度/模板缓冲资源
+        ComPtr<ID3D12Resource> m_depthStencilBuffer;
+        DXGI_FORMAT m_depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
         // 同步相关
         UINT64 m_currentFence = 0;
@@ -40,10 +47,12 @@ namespace Vibe {
         void InitCommandObjects();
         void InitSwapChain();
         void InitRtvHeap();
+        void InitDepthStencilBuffer();
         
         // 渲染辅助
         void FlushCommandQueue();
         D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
+        D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
         ID3D12Resource* CurrentBackBuffer() const;
     };
 }
