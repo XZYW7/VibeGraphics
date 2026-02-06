@@ -299,3 +299,138 @@ struct CD3DX12_DESCRIPTOR_RANGE : public D3D12_DESCRIPTOR_RANGE
         range.OffsetInDescriptorsFromTableStart = offsetInDescriptorsFromTableStart;
     }
 };
+
+struct CD3DX12_STATIC_SAMPLER_DESC : public D3D12_STATIC_SAMPLER_DESC
+{
+    CD3DX12_STATIC_SAMPLER_DESC() = default;
+    explicit CD3DX12_STATIC_SAMPLER_DESC(const D3D12_STATIC_SAMPLER_DESC& o) noexcept : D3D12_STATIC_SAMPLER_DESC(o) {}
+    CD3DX12_STATIC_SAMPLER_DESC(
+         UINT shaderRegister,
+         D3D12_FILTER filter = D3D12_FILTER_ANISOTROPIC,
+         D3D12_TEXTURE_ADDRESS_MODE addressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+         D3D12_TEXTURE_ADDRESS_MODE addressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+         D3D12_TEXTURE_ADDRESS_MODE addressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+         FLOAT mipLODBias = 0,
+         UINT maxAnisotropy = 16,
+         D3D12_COMPARISON_FUNC comparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL,
+         D3D12_STATIC_BORDER_COLOR borderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE,
+         FLOAT minLOD = 0.f,
+         FLOAT maxLOD = D3D12_FLOAT32_MAX,
+         D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+         UINT registerSpace = 0) noexcept
+    {
+        Init(shaderRegister, filter, addressU, addressV, addressW, mipLODBias, maxAnisotropy, comparisonFunc, borderColor, minLOD, maxLOD, shaderVisibility, registerSpace);
+    }
+    inline void Init(
+        UINT shaderRegister,
+        D3D12_FILTER filter = D3D12_FILTER_ANISOTROPIC,
+        D3D12_TEXTURE_ADDRESS_MODE addressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE addressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE addressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        FLOAT mipLODBias = 0,
+        UINT maxAnisotropy = 16,
+        D3D12_COMPARISON_FUNC comparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL,
+        D3D12_STATIC_BORDER_COLOR borderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE,
+        FLOAT minLOD = 0.f,
+        FLOAT maxLOD = D3D12_FLOAT32_MAX,
+        D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL,
+        UINT registerSpace = 0) noexcept
+    {
+        Filter = filter;
+        AddressU = addressU;
+        AddressV = addressV;
+        AddressW = addressW;
+        MipLODBias = mipLODBias;
+        MaxAnisotropy = maxAnisotropy;
+        ComparisonFunc = comparisonFunc;
+        BorderColor = borderColor;
+        MinLOD = minLOD;
+        MaxLOD = maxLOD;
+        ShaderRegister = shaderRegister;
+        RegisterSpace = registerSpace;
+        ShaderVisibility = shaderVisibility;
+    }
+};
+
+inline UINT64 GetRequiredIntermediateSize(
+    _In_ ID3D12Resource* pDestinationResource,
+    _In_ UINT FirstSubresource,
+    _In_ UINT NumSubresources)
+{
+    D3D12_RESOURCE_DESC Desc = pDestinationResource->GetDesc();
+    UINT64 RequiredSize = 0;
+    
+    ID3D12Device* pDevice = nullptr;
+    pDestinationResource->GetDevice(IID_PPV_ARGS(&pDevice));
+    pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, 0, nullptr, nullptr, nullptr, &RequiredSize);
+    pDevice->Release();
+    
+    return RequiredSize;
+}
+
+// Minimal UpdateSubresources for simple textures (non-array, non-mipmapped mainly or simplified usage)
+inline UINT64 UpdateSubresources( 
+    _In_ ID3D12GraphicsCommandList* pCmdList,
+    _In_ ID3D12Resource* pDestinationResource,
+    _In_ ID3D12Resource* pIntermediate,
+    _In_ UINT64 IntermediateOffset,
+    _In_ UINT FirstSubresource,
+    _In_ UINT NumSubresources,
+    _In_reads_(NumSubresources) D3D12_SUBRESOURCE_DATA* pSrcData)
+{
+    UINT64 RequiredSize = 0;
+    UINT64 MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * NumSubresources;
+    if (MemToAlloc > SIZE_MAX) return 0;
+    void* pMem = HeapAlloc(GetProcessHeap(), 0, static_cast<SIZE_T>(MemToAlloc));
+    if (pMem == nullptr) return 0;
+    
+    auto pLayouts = reinterpret_cast<D3D12_PLACED_SUBRESOURCE_FOOTPRINT*>(pMem);
+    UINT64* pRowSizesInBytes = reinterpret_cast<UINT64*>(pLayouts + NumSubresources);
+    UINT* pNumRows = reinterpret_cast<UINT*>(pRowSizesInBytes + NumSubresources);
+    
+    D3D12_RESOURCE_DESC Desc = pDestinationResource->GetDesc();
+    ID3D12Device* pDevice = nullptr;
+    pDestinationResource->GetDevice(IID_PPV_ARGS(&pDevice));
+    pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, IntermediateOffset, pLayouts, pNumRows, pRowSizesInBytes, &RequiredSize);
+    pDevice->Release();
+    
+    UINT64 Result = 0;
+    BYTE* pData = nullptr;
+    if (FAILED(pIntermediate->Map(0, nullptr, reinterpret_cast<void**>(&pData)))) {
+       HeapFree(GetProcessHeap(), 0, pMem);
+       return 0;
+    }
+    
+    for (UINT i = 0; i < NumSubresources; ++i) {
+        D3D12_MEMCPY_DEST DestData = { pData + pLayouts[i].Offset, pLayouts[i].Footprint.RowPitch, pLayouts[i].Footprint.RowPitch * pNumRows[i] };
+        D3D12_SUBRESOURCE_DATA SrcData = pSrcData[i];
+        for (UINT z = 0; z < pLayouts[i].Footprint.Depth; ++z) {
+            BYTE* pDestSlice = reinterpret_cast<BYTE*>(DestData.pData) + DestData.SlicePitch * z;
+            const BYTE* pSrcSlice = reinterpret_cast<const BYTE*>(SrcData.pData) + SrcData.SlicePitch * z;
+            for (UINT y = 0; y < pNumRows[i]; ++y) {
+                memcpy(pDestSlice + DestData.RowPitch * y, pSrcSlice + SrcData.RowPitch * y, static_cast<size_t>(pRowSizesInBytes[i]));
+            }
+        }
+    }
+    pIntermediate->Unmap(0, nullptr);
+    
+    if (pDestinationResource->GetDesc().Dimension == D3D12_RESOURCE_DIMENSION_BUFFER) {
+        pCmdList->CopyBufferRegion(pDestinationResource, 0, pIntermediate, pLayouts[0].Offset, pLayouts[0].Footprint.Width);
+    } else {
+        for (UINT i = 0; i < NumSubresources; ++i) {
+            D3D12_TEXTURE_COPY_LOCATION DstT = {};
+            DstT.pResource = pDestinationResource;
+            DstT.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+            DstT.SubresourceIndex = i + FirstSubresource;
+
+            D3D12_TEXTURE_COPY_LOCATION SrcT = {};
+            SrcT.pResource = pIntermediate;
+            SrcT.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+            SrcT.PlacedFootprint = pLayouts[i];
+
+            pCmdList->CopyTextureRegion(&DstT, 0, 0, 0, &SrcT, nullptr);
+        }
+    }
+    HeapFree(GetProcessHeap(), 0, pMem);
+    return RequiredSize;
+}
