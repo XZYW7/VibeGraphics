@@ -1,0 +1,10 @@
+target("05_Textures")
+    set_kind("binary")
+    add_files("src/main.cpp")
+    add_deps("VibeCommon")
+    add_syslinks("user32", "gdi32", "d3d12", "dxgi", "d3dcompiler")
+    
+    after_build(function (target)
+        import("core.project.task")
+        os.cp("$(scriptdir)/src/shaders.hlsl", target:targetdir())
+    end)

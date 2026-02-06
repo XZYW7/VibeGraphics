@@ -192,6 +192,20 @@ struct CD3DX12_RESOURCE_DESC : public D3D12_RESOURCE_DESC {
     static inline CD3DX12_RESOURCE_DESC Buffer(UINT64 width, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE, UINT64 alignment = 0) {
         return CD3DX12_RESOURCE_DESC(D3D12_RESOURCE_DIMENSION_BUFFER, alignment, width, 1, 1, 1, DXGI_FORMAT_UNKNOWN, 1, 0, D3D12_TEXTURE_LAYOUT_ROW_MAJOR, flags);
     }
+    static inline CD3DX12_RESOURCE_DESC Tex2D(
+        DXGI_FORMAT format,
+        UINT64 width,
+        UINT height,
+        UINT16 arraySize = 1,
+        UINT16 mipLevels = 0,
+        UINT sampleCount = 1,
+        UINT sampleQuality = 0,
+        D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE,
+        D3D12_TEXTURE_LAYOUT layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
+        UINT64 alignment = 0)
+    {
+        return CD3DX12_RESOURCE_DESC(D3D12_RESOURCE_DIMENSION_TEXTURE2D, alignment, width, height, arraySize, mipLevels, format, sampleCount, sampleQuality, layout, flags);
+    }
     CD3DX12_RESOURCE_DESC(D3D12_RESOURCE_DIMENSION dimension, UINT64 alignment, UINT64 width, UINT height, UINT16 depthOrArraySize, UINT16 mipLevels, DXGI_FORMAT format, UINT sampleCount, UINT sampleQuality, D3D12_TEXTURE_LAYOUT layout, D3D12_RESOURCE_FLAGS flags) {
         Dimension = dimension;
         Alignment = alignment;
@@ -245,5 +259,43 @@ struct CD3DX12_BLEND_DESC : public D3D12_BLEND_DESC {
         };
         for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
             RenderTarget[i] = defaultRenderTargetBlendDesc;
+    }
+};
+
+struct CD3DX12_DESCRIPTOR_RANGE : public D3D12_DESCRIPTOR_RANGE
+{
+    CD3DX12_DESCRIPTOR_RANGE() = default;
+    explicit CD3DX12_DESCRIPTOR_RANGE(const D3D12_DESCRIPTOR_RANGE& o) noexcept : D3D12_DESCRIPTOR_RANGE(o) {}
+    CD3DX12_DESCRIPTOR_RANGE(
+        D3D12_DESCRIPTOR_RANGE_TYPE rangeType,
+        UINT numDescriptors,
+        UINT baseShaderRegister,
+        UINT registerSpace = 0,
+        UINT offsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND) noexcept
+    {
+        Init(rangeType, numDescriptors, baseShaderRegister, registerSpace, offsetInDescriptorsFromTableStart);
+    }
+    inline void Init(
+        D3D12_DESCRIPTOR_RANGE_TYPE rangeType,
+        UINT numDescriptors,
+        UINT baseShaderRegister,
+        UINT registerSpace = 0,
+        UINT offsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND) noexcept
+    {
+        Init(*this, rangeType, numDescriptors, baseShaderRegister, registerSpace, offsetInDescriptorsFromTableStart);
+    }
+    static inline void Init(
+        _Out_ D3D12_DESCRIPTOR_RANGE& range,
+        D3D12_DESCRIPTOR_RANGE_TYPE rangeType,
+        UINT numDescriptors,
+        UINT baseShaderRegister,
+        UINT registerSpace = 0,
+        UINT offsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND) noexcept
+    {
+        range.RangeType = rangeType;
+        range.NumDescriptors = numDescriptors;
+        range.BaseShaderRegister = baseShaderRegister;
+        range.RegisterSpace = registerSpace;
+        range.OffsetInDescriptorsFromTableStart = offsetInDescriptorsFromTableStart;
     }
 };
