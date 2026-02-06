@@ -43,13 +43,6 @@ private:
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
 
     UINT m_indexCount = 0;
-
-    // 变换矩阵
-    XMFLOAT4X4 m_worldViewProj = MathHelper::Identity4x4();
-    float m_theta = 0.0f;
-    float m_phi = XM_PIDIV4;
-    float m_radius = 5.0f;
-
     // 简单的 MathHelper
     struct MathHelper {
         static XMFLOAT4X4 Identity4x4() {
@@ -61,6 +54,13 @@ private:
             return I;
         }
     };
+    // 变换矩阵
+    XMFLOAT4X4 m_worldViewProj = MathHelper::Identity4x4();
+    float m_theta = 0.0f;
+    float m_phi = XM_PIDIV4;
+    float m_radius = 5.0f;
+
+
 };
 
 bool DepthBufferingApp::Initialize() {
