@@ -1,4 +1,4 @@
-target("07_CameraControl")
+target("06_CameraControl")
     set_kind("binary")
     add_files("src/main.cpp")
     add_deps("VibeCommon")

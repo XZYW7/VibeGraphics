@@ -1,4 +1,4 @@
-target("06_Textures_Load")
+target("05-1_Textures_Load")
     set_kind("binary")
     add_files("src/main.cpp")
     add_deps("VibeCommon")
