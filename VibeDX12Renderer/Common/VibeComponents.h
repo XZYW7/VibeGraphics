@@ -352,6 +352,60 @@ struct CD3DX12_STATIC_SAMPLER_DESC : public D3D12_STATIC_SAMPLER_DESC
     }
 };
 
+struct CD3DX12_DEPTH_STENCIL_DESC : public D3D12_DEPTH_STENCIL_DESC
+{
+    CD3DX12_DEPTH_STENCIL_DESC() = default;
+    explicit CD3DX12_DEPTH_STENCIL_DESC(const D3D12_DEPTH_STENCIL_DESC& o) noexcept :
+        D3D12_DEPTH_STENCIL_DESC(o)
+    {}
+    explicit CD3DX12_DEPTH_STENCIL_DESC(CD3DX12_DEFAULT) noexcept
+    {
+        DepthEnable = TRUE;
+        DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+        DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+        StencilEnable = FALSE;
+        StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+        StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+        const D3D12_DEPTH_STENCILOP_DESC defaultStencilOp =
+        { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+        FrontFace = defaultStencilOp;
+        BackFace = defaultStencilOp;
+    }
+    explicit CD3DX12_DEPTH_STENCIL_DESC(
+        BOOL depthEnable,
+        D3D12_DEPTH_WRITE_MASK depthWriteMask,
+        D3D12_COMPARISON_FUNC depthFunc,
+        BOOL stencilEnable,
+        UINT8 stencilReadMask,
+        UINT8 stencilWriteMask,
+        D3D12_STENCIL_OP stencilFrontFailOp,
+        D3D12_STENCIL_OP stencilFrontDepthFailOp,
+        D3D12_STENCIL_OP stencilFrontPassOp,
+        D3D12_COMPARISON_FUNC stencilFrontFunc,
+        D3D12_STENCIL_OP stencilBackFailOp,
+        D3D12_STENCIL_OP stencilBackDepthFailOp,
+        D3D12_STENCIL_OP stencilBackPassOp,
+        D3D12_COMPARISON_FUNC stencilBackFunc) noexcept
+    {
+        DepthEnable = depthEnable;
+        DepthWriteMask = depthWriteMask;
+        DepthFunc = depthFunc;
+        StencilEnable = stencilEnable;
+        StencilReadMask = stencilReadMask;
+        StencilWriteMask = stencilWriteMask;
+        FrontFace.StencilFailOp = stencilFrontFailOp;
+        FrontFace.StencilDepthFailOp = stencilFrontDepthFailOp;
+        FrontFace.StencilPassOp = stencilFrontPassOp;
+        FrontFace.StencilFunc = stencilFrontFunc;
+        BackFace.StencilFailOp = stencilBackFailOp;
+        BackFace.StencilDepthFailOp = stencilBackDepthFailOp;
+        BackFace.StencilPassOp = stencilBackPassOp;
+        BackFace.StencilFunc = stencilBackFunc;
+    }
+};
+
+
+
 inline UINT64 GetRequiredIntermediateSize(
     _In_ ID3D12Resource* pDestinationResource,
     _In_ UINT FirstSubresource,
@@ -433,4 +487,57 @@ inline UINT64 UpdateSubresources(
     }
     HeapFree(GetProcessHeap(), 0, pMem);
     return RequiredSize;
+}
+
+inline HRESULT CreateDefaultBuffer(
+    ID3D12Device* device,
+    ID3D12GraphicsCommandList* cmdList,
+    const void* initData,
+    UINT64 byteSize,
+    Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer,
+    Microsoft::WRL::ComPtr<ID3D12Resource>& defaultBuffer)
+{
+    HRESULT hr;
+    
+    CD3DX12_HEAP_PROPERTIES heapPropsDefault(D3D12_HEAP_TYPE_DEFAULT);
+    CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(byteSize);
+    
+    hr = device->CreateCommittedResource(
+        &heapPropsDefault,
+        D3D12_HEAP_FLAG_NONE,
+        &bufferDesc,
+        D3D12_RESOURCE_STATE_COMMON,
+        nullptr,
+        IID_PPV_ARGS(defaultBuffer.GetAddressOf()));
+
+    if (FAILED(hr)) return hr;
+
+    CD3DX12_HEAP_PROPERTIES heapPropsUpload(D3D12_HEAP_TYPE_UPLOAD);
+    
+    hr = device->CreateCommittedResource(
+        &heapPropsUpload,
+        D3D12_HEAP_FLAG_NONE,
+        &bufferDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(uploadBuffer.GetAddressOf()));
+
+    if (FAILED(hr)) return hr;
+
+    D3D12_SUBRESOURCE_DATA subResourceData = {};
+    subResourceData.pData = initData;
+    subResourceData.RowPitch = byteSize;
+    subResourceData.SlicePitch = subResourceData.RowPitch;
+
+    auto barrier1 = CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(), 
+        D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+    cmdList->ResourceBarrier(1, &barrier1);
+
+    UpdateSubresources(cmdList, defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+
+    auto barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+    cmdList->ResourceBarrier(1, &barrier2);
+
+    return hr;
 }

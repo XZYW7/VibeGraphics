@@ -1,0 +1,11 @@
+target("09_Stenciling")
+    set_kind("binary")
+    add_files("src/*.cpp")
+    add_includedirs("../../Common")
+    add_deps("VibeCommon")
+    add_syslinks("User32", "Gdi32", "D3D12", "dxgi", "d3dcompiler")
+
+    after_build(function (target)
+        os.cp("$(scriptdir)/src/shaders.hlsl", target:targetdir())
+        os.cp("$(projectdir)/Assets", target:targetdir())
+    end)
