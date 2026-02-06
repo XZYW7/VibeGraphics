@@ -1,5 +1,6 @@
 .xmake
 .vscode
+build
 # Prerequisites
 *.d
 
