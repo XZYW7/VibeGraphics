@@ -5,7 +5,7 @@ target("VibeCommon")
     add_includedirs(".", {public = true}) 
     
     -- 添加源码
-    -- add_files("**.cpp")
+    add_files("**.cpp")
     add_headerfiles("**.h")
 
     -- Windows 下链接 DX12 核心库
