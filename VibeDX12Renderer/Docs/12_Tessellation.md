@@ -1,6 +1,6 @@
 # Lesson 12: Tessellation (曲面细分)
 
-![TessellationShader](../../Assets/12_Tessellation.png)
+![TessellationShader](../../Assets/VibeDX12Renderer/12_Tessellation.png)
 
 
 ## 1. Introduction (简介)

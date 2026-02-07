@@ -16,7 +16,7 @@
 
 本节我们将利用 GS 实现 **Billboards (公告板)** 技术。
 我们只向 GPU 发送数个“点”（树根的位置），让 GS 自动将其扩展为“总是面朝摄像机的四边形”（树的贴图）。这样可以极大地节省带宽。
-![GeometryShader](../../Assets/10_GeometryShader.png)
+![GeometryShader](../../Assets/VibeDX12Renderer/10_GeometryShader.png)
 
 ---
 

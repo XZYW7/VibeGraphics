@@ -1,6 +1,6 @@
 # Lesson 05-1: Loading Textures from File (加载图片文件)
 
-![Textures_Load](../../Assets/05-1_Textures_Load.png)
+![Textures_Load](../../Assets/VibeDX12Renderer/05-1_Textures_Load.png)
 
 ## 1. Introduction (引言)
 在 Lesson 05 中，我们通过代码手动生成了一个棋盘格纹理。但在真正的游戏开发中，纹理都是由美术人员制作好的图片文件（如 .jpg, .png）。
@@ -41,7 +41,7 @@ void TexturesLoadApp::BuildTexture() {
     
     if (!img) {
         // 如果找不到，尝试往上级目录找找（应对不同的运行路径）
-        img = stbi_load("../../Assets/512x512_Texel_Density_Texture_1.png", &width, &height, &channels, 4);
+        img = stbi_load("../../Assets/VibeDX12Renderer/512x512_Texel_Density_Texture_1.png", &width, &height, &channels, 4);
     }
     
     if (!img) {

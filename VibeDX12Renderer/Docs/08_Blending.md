@@ -1,6 +1,6 @@
 # Lesson 08: Blending (混合)
 
-![Blending](../../Assets/08_Blending.png)
+![Blending](../../Assets/VibeDX12Renderer/08_Blending.png)
 
 ## 1. Introduction (简介)
 

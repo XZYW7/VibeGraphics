@@ -1,6 +1,6 @@
 # Lesson 09: Stenciling & Mirrors (模板测试)
 
-![Stencil](../../Assets/09_Stenciling.png)
+![Stencil](../../Assets/VibeDX12Renderer/09_Stenciling.png)
 
 ## 1. Introduction (简介)
 

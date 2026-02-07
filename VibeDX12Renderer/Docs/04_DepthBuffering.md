@@ -1,6 +1,6 @@
 # Lesson 04: Depth Buffering & Index Buffers (深度缓冲与索引缓冲)
 
-![DepthBuffering](../../Assets/04_DepthBuffering.png)
+![DepthBuffering](../../Assets/VibeDX12Renderer/04_DepthBuffering.png)
 
 ## 1. Introduction (引言)
 在上一节课中，我们画了一个平面的三角形。但在 3D 世界中，物体是有前有后的。

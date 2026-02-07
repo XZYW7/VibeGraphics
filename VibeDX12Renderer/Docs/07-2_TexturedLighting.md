@@ -4,7 +4,7 @@
 *Source: LearnOpenGL.com*
 *(Lighting only)*
 vs
-![TexturedLighting](../../Assets/07-2_TexturedLighting.png)
+![TexturedLighting](../../Assets/VibeDX12Renderer/07-2_TexturedLighting.png)
 *(Lighting + Texture)*
 
 ## 1. Introduction (简介)

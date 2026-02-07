@@ -1,6 +1,6 @@
 # Lesson 07-1: Materials System (材质系统)
 
-![Material](../../Assets/07-1_Materials.png)
+![Material](../../Assets/VibeDX12Renderer/07-1_Materials.png)
 
 ## 1. Introduction (简介)
 

@@ -1,6 +1,6 @@
 # Lesson 01: Hello Window
 
-![Result](../../Assets/01_HelloWindow.png)
+![Result](../../Assets/VibeDX12Renderer/01_HelloWindow.png)
 
 ## Goal (目标)
 本课的目标非常简单：创建一个标准的 Windows 窗口。

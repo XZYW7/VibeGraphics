@@ -1,5 +1,7 @@
 # Lesson 12-1: Tessellation & Textured Terrain (曲面细分与纹理地形)
 
+![TexturedTerrain](../../Assets/VibeDX12Renderer/12-1_Tessellation_TexturedTerrain.png)
+
 ## 1. Introduction (概述)
 
 本课程演示了 **曲面细分 (Tessellation)** 与 **程序化几何 (Procedural Geometry)** 和 **纹理 (Texturing)** 的结合。

@@ -1,6 +1,6 @@
 # Lesson 07: Basic Lighting (Phong Model) (基础光照)
 
-![Lighting](../../Assets/07_Lighting.png)
+![Lighting](../../Assets/VibeDX12Renderer/07_Lighting.png)
 
 ## 1. Introduction (简介)
 

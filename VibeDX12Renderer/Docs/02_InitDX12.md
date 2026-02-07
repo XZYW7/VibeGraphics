@@ -1,6 +1,6 @@
 # Lesson 02: Init DX12 (初始化 DirectX 12)
 
-![Result](../../Assets/02_InitDX12.png)
+![Result](../../Assets/VibeDX12Renderer/02_InitDX12.png)
 
 ## Goal (目标)
 本课的目标是“点亮”显卡。我们要初始化 Direct3D 12 的核心组件，并建立起 CPU 与 GPU 之间的沟通桥梁。

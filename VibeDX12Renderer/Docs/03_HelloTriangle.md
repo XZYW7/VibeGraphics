@@ -1,6 +1,6 @@
 # Lesson 03: Hello Triangle (你好，三角形)
 
-![HelloTriangle](../../Assets/03_HelloTriangle.png)
+![HelloTriangle](../../Assets/VibeDX12Renderer/03_HelloTriangle.png)
 
 ## 1. Introduction (引言)
 在上一节课中，我们学会了如何初始化 DirectX 12 并清除屏幕（把它刷成蓝色）。虽然这证明了显卡在工作，但我们的屏幕依然是一片虚无。

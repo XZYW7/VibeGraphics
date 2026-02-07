@@ -1,6 +1,6 @@
 # Lesson 11: Compute Shader (GPGPU) (计算着色器)
 
-![ComuteShader](../../Assets/11_ComputeShader.png)
+![ComuteShader](../../Assets/VibeDX12Renderer/11_ComputeShader.png)
 
 
 ## 1. Introduction (简介)

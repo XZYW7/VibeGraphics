@@ -1,6 +1,6 @@
 # Lesson 05: Textures (纹理材质)
 
-![Textures](../../Assets/05_Textures.png)
+![Textures](../../Assets/VibeDX12Renderer/05_Textures.png)
 
 ## 1. Introduction (引言)
 光有颜色是不够的，现实世界的物体表面充满了细节：木纹、砖缝、皮肤毛孔。如果不使用纹理，我们可能需要数百万个微小的三角形来模拟这些细节。
