@@ -36,9 +36,13 @@ def main():
         elif os.path.isdir(s):
             shutil.copytree(s, d)
 
-    # 4. Copy Assets
+    # 4. Copy Assets (Rename to lowercase 'assets' to match MkDocs theme structure)
     print("Copying assets...")
-    assets_target = os.path.join(SITE_SOURCE, "Assets")
+    # MkDocs Material theme uses 'assets' (lowercase) for its CSS/JS.
+    # On Windows (case-insensitive), 'Assets' and 'assets' merge, causing no local issues.
+    # On GitHub Pages (Linux, case-sensitive), if we ship 'Assets', links to 'assets/css/...' FAIL (404).
+    # Solution: Normalize our user content to 'assets' (lowercase) in the build output.
+    assets_target = os.path.join(SITE_SOURCE, "assets")
     shutil.copytree(ASSETS_SOURCE, assets_target)
 
     # 5. Copy Main README as Index
@@ -49,7 +53,7 @@ def main():
     # This is a common cause of broken styling on GitHub Pages
     print("Creating .nojekyll file...")
     with open(os.path.join(SITE_SOURCE, ".nojekyll"), "w") as f:
-        pass
+        f.write("")
 
     # 6. Process Markdown Files (Fix Links)
     print("Processing links in markdown files...")
@@ -72,14 +76,14 @@ def main():
                         # Links inside it point to 01_Hello.md which are in same folder, so OK.
                         pass # renaming happens below
                     
-                    # Fix Asset Links: ../../Assets -> ../Assets
-                    # Because now file is at site_source/VibeDX12Renderer/file.md
-                    # And Assets are at site_source/Assets
-                    new_content = new_content.replace("../../Assets/", "../Assets/")
+                    # Fix Asset Links: ../../Assets -> ../assets (LOWERCASE)
+                    new_content = new_content.replace("../../Assets/", "../assets/")
+                    # Also catch any that might have been single parent
+                    new_content = new_content.replace("../Assets/", "../assets/")
                 
                 elif file == "index.md" and root == SITE_SOURCE:
-                    # Root index.md (Main README)
-                    pass
+                    # Root index.md (Main README) -> Fix Assets/ to assets/
+                    new_content = new_content.replace("Assets/", "assets/")
 
                 # Rename logic for READMEs
                 final_path = file_path
