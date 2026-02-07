@@ -45,6 +45,12 @@ def main():
     print("Copying main README...")
     shutil.copy2(os.path.join(PROJECT_ROOT, "README.md"), os.path.join(SITE_SOURCE, "index.md"))
 
+    # Add .nojekyll to prevent GitHub Pages from ignoring files starting with _
+    # This is a common cause of broken styling on GitHub Pages
+    print("Creating .nojekyll file...")
+    with open(os.path.join(SITE_SOURCE, ".nojekyll"), "w") as f:
+        pass
+
     # 6. Process Markdown Files (Fix Links)
     print("Processing links in markdown files...")
     
