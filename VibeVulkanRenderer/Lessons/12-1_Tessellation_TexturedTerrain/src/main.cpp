@@ -1,24 +1,17 @@
 #include <VibeVulkanApp.h>
 #include <iostream>
 
-// Lesson 06: Camera Control
-// This lesson demonstrates camera movement and control in Vulkan
-
 using namespace Vibe;
 
-class CameraControlApp : public VibeVulkanApp {
+class TessellationTerrainApp : public VibeVulkanApp {
 public:
-    CameraControlApp(HINSTANCE hInstance) : VibeVulkanApp(hInstance) {
-        m_MainWndCaption = L"Lesson 06: Camera Control (Vulkan)";
+    TessellationTerrainApp(HINSTANCE hInstance) : VibeVulkanApp(hInstance) {
+        m_MainWndCaption = L"Lesson 12-1: Tessellation Textured Terrain (Vulkan)";
     }
 
     virtual bool Initialize() override {
         if (!VibeVulkanApp::Initialize()) return false;
-        
-        std::cout << "Lesson 06: Camera Control" << std::endl;
-        std::cout << "This lesson will demonstrate camera movement." << std::endl;
-        std::cout << "Implementation: To be completed" << std::endl;
-        
+        std::cout << "Lesson 12-1: Tessellation Textured Terrain - To be implemented" << std::endl;
         return true;
     }
 
@@ -28,7 +21,7 @@ public:
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, PSTR cmd, int show) {
     try {
-        CameraControlApp theApp(hInstance);
+        TessellationTerrainApp theApp(hInstance);
         if(!theApp.Initialize()) return 0;
         return theApp.Run();
     }
