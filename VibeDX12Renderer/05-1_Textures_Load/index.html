@@ -1415,7 +1415,7 @@
 
 
 <h1 id="lesson-05-1-loading-textures-from-file">Lesson 05-1: Loading Textures from File (加载图片文件)</h1>
-<p><img alt="Textures_Load" src="../../Assets/VibeDX12Renderer/05-1_Textures_Load.png" /></p>
+<p><img alt="Textures_Load" src="../../assets/VibeDX12Renderer/05-1_Textures_Load.png" /></p>
 <h2 id="1-introduction">1. Introduction (引言)</h2>
 <p>在 Lesson 05 中，我们通过代码手动生成了一个棋盘格纹理。但在真正的游戏开发中，纹理都是由美术人员制作好的图片文件（如 .jpg, .png）。
 本节课我们将引入一个极为流行的单头文件库 <strong>stb_image.h</strong>，通过通过它将磁盘上的图片加载到内存，并最终上传到 GPU。</p>
@@ -1444,7 +1444,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">img</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="c1">// 如果找不到，尝试往上级目录找找（应对不同的运行路径）</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="n">img</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stbi_load</span><span class="p">(</span><span class="s">&quot;../Assets/VibeDX12Renderer/512x512_Texel_Density_Texture_1.png&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">channels</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="n">img</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stbi_load</span><span class="p">(</span><span class="s">&quot;../assets/VibeDX12Renderer/512x512_Texel_Density_Texture_1.png&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">channels</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">img</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>

@@ -1393,7 +1393,7 @@
 
 
 <h1 id="lesson-08-blending">Lesson 08: Blending (混合)</h1>
-<p><img alt="Blending" src="../../Assets/VibeDX12Renderer/08_Blending.png" /></p>
+<p><img alt="Blending" src="../../assets/VibeDX12Renderer/08_Blending.png" /></p>
 <h2 id="1-introduction">1. Introduction (简介)</h2>
 <p>在现实世界中，不是所有物体都是完全不透明的。玻璃、水、烟雾、甚至是半透明的塑料，它们会让光线穿过。</p>
 <p>在渲染管线中，这发生在最后一步——<strong>Output Merger (输出合并)</strong> 阶段。当 Shader 计算出像素颜色后，我们不直接用它覆盖 Framebuffer，而是让它与 Framebuffer 中已有的颜色（Background Color）按照一定比例进行混合。
