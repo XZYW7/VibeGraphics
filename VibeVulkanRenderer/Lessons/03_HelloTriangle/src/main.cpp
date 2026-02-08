@@ -378,8 +378,9 @@ private:
         
         VK_CHECK(vkEndCommandBuffer(commandBuffer));
     }
-    
-    ~HelloTriangleApp() {
+
+public:
+    virtual ~HelloTriangleApp() {
         WaitForDeviceIdle();
         
         if (m_vertexBuffer != VK_NULL_HANDLE)

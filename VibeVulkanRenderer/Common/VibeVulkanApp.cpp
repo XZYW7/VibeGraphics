@@ -291,7 +291,7 @@ VkPresentModeKHR VibeVulkanApp::ChooseSwapPresentMode(const std::vector<VkPresen
 }
 
 VkExtent2D VibeVulkanApp::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
-    if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+    if (capabilities.currentExtent.width != (std::numeric_limits<uint32_t>::max)()) {
         return capabilities.currentExtent;
     } else {
         VkExtent2D actualExtent = {

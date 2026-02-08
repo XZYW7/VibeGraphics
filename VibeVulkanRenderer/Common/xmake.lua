@@ -1,3 +1,5 @@
+add_requires("vulkan-headers", "vulkan-loader")
+
 target("VibeVulkanCommon")
     set_kind("static")
     
@@ -14,12 +16,6 @@ target("VibeVulkanCommon")
     end
     
     -- Vulkan SDK
-    add_requires("vulkan-headers", "vulkan-loader")
-    add_packages("vulkan-headers", "vulkan-loader")
     
-    -- Try to find Vulkan SDK from environment
-    if os.getenv("VULKAN_SDK") then
-        add_includedirs("$(env VULKAN_SDK)/Include")
-        add_linkdirs("$(env VULKAN_SDK)/Lib")
-        add_links("vulkan-1")
-    end
+    add_packages("vulkan-headers", "vulkan-loader", {public = true})
+    
