@@ -1,0 +1,62 @@
+site_name: Vibe Graphics
+site_url: https://xzyw7.github.io/VibeGraphics/
+repo_url: https://github.com/XZYW7/VibeGraphics
+edit_uri: blob/main/VibeDX12Renderer/Docs/
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+  palette: 
+    - scheme: default
+      primary: indigo
+      accent: deep purple
+    - scheme: slate 
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+      primary: indigo
+      accent: deep purple
+
+docs_dir: site_source
+
+nav:
+  - Home: index.md
+  - VibeDX12Renderer:
+    - Introduction: VibeDX12Renderer/index.md
+    - 01 Hello Window: VibeDX12Renderer/01_HelloWindow.md
+    - 02 Init DX12: VibeDX12Renderer/02_InitDX12.md
+    - 03 Hello Triangle: VibeDX12Renderer/03_HelloTriangle.md
+    - 04 Depth Buffering: VibeDX12Renderer/04_DepthBuffering.md
+    - 05 Textures: 
+      - Concept: VibeDX12Renderer/05_Textures.md
+      - Loading: VibeDX12Renderer/05-1_Textures_Load.md
+    - 06 Camera Control: VibeDX12Renderer/06_CameraControl.md
+    - 07 Basic Lighting: 
+      - Concept: VibeDX12Renderer/07_Lighting.md
+      - Materials: VibeDX12Renderer/07-1_Materials.md
+      - Textured: VibeDX12Renderer/07-2_TexturedLighting.md
+    - 08 Blending: VibeDX12Renderer/08_Blending.md
+    - 09 Stenciling: VibeDX12Renderer/09_Stenciling.md
+    - 10 Geometry Shader: VibeDX12Renderer/10_GeometryShader.md
+    - 11 Compute Shader: VibeDX12Renderer/11_ComputeShader.md
+    - 12 Tessellation:
+      - Concept: VibeDX12Renderer/12_Tessellation.md
+      - Terrain: VibeDX12Renderer/12-1_Tessellation_TexturedTerrain.md
+  - VibeVulkanRenderer:
+    - Introduction: VibeVulkanRenderer/index.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html

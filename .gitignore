@@ -42,3 +42,7 @@ build
 
 # debug information files
 *.dwo
+
+# Documentation generation
+site_source/
+site/
